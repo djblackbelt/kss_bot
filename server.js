@@ -20,11 +20,11 @@ function flagSub(flag, msg){
     if (err) throw err;
     console.log(result);
     if (result.length == 0) msg.reply("Flag not found!");
-    if (result[0]["usersCompleted"].includes(msg.author.id)) msg.reply("You have already claimed this flag!");
+    else if (result[0]["usersCompleted"].includes(msg.author.id)) msg.reply("You have already claimed this flag!");
     else{
       colFlags.updateOne({"flag": flag}, {$push: {usersCompleted : msg.author.id}});
       colUsers.updateOne({"id": msg.author.id}, {$push: {challenges : result[0]["name"]}});
-      msg.reply(`Congratulations! You have completed ${result[0]["name"]}!`)
+      msg.reply(`Congratulations! You have completed ${result[0]["name"]}!`);
     }
   });
 }
