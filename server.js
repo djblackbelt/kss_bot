@@ -10,14 +10,21 @@ var colFlags;
 var colUsers;
 
 function flagSub(flag, msg){
+  colUsers.find({"id": msg.author.id}).toArray(function(err, res){
+    if (res.length == 0) {
+      msg.reply("User not found, creating entry...");
+      createUser(msg.author.id, msg.author.username, msg.author.tag);
+    }
+  });
   colFlags.find({"flag": flag}).toArray(function(err, result){
     if (err) throw err;
     console.log(result);
     if (result.length == 0) msg.reply("Flag not found!");
+    if (result[0]["usersCompleted"].includes(msg.author.id)) msg.reply("You have already claimed this flag!");
     else{
-      console.log("Flag found...");
-      //colFlags.updateOne({"flag": flag}, {$push: {usersCompleted : msg.author.id}})
-      //colUsers.updateOne({""})
+      colFlags.updateOne({"flag": flag}, {$push: {usersCompleted : msg.author.id}});
+      colUsers.updateOne({"id": msg.author.id}, {$push: {challenges : result[0]["name"]}});
+      msg.reply(`Congratulations! You have completed ${result[0]["name"]}!`)
     }
   });
 }
@@ -65,20 +72,7 @@ function permCommand(args, msg){
         else if(result.length == 0){
           msg.reply("Entry not found, adding entry");
           console.log("Entry not found, adding entry");
-          var temp = {
-            id: msg.author.id,
-            username: msg.author.username,
-            tag: msg.author.tag,
-            challenges: [],
-            permission: 'Z'
-          }
-          colUsers.insert(temp, function(err, result){
-            if (err) throw err;
-            else{
-              msg.reply(`User added ${msg.author.tag}`)
-              console.log(`User added ${msg.author.tag}`);
-            }
-          });
+          createUser(msg.author.id, msg.author.username, msg.author.tag);
         }
       });
     }
@@ -90,7 +84,7 @@ function permCommand(args, msg){
             colUsers.update({"username": args[2]}, { $set: {permission: 'A'}}, function(err, res){
               if (err) throw err;
               else{
-                msg.reply(`Player (${args[2]})updated.`);
+                msg.reply(`Player (${args[2]}) updated.`);
                 console.log(`Player (${msg.author.tag}) updated (${args[2]})'s permission to admin.'`);
               }
             });
@@ -103,6 +97,23 @@ function permCommand(args, msg){
   else{
     msg.reply(`Fuck you, ${msg.author.username}.`)
   }
+}
+
+function createUser(id, username, tag){
+  var temp = {
+    id: id,
+    username: username,
+    tag: tag,
+    challenges: [],
+    permission: 'Z'
+  }
+  colUsers.insert(temp, function(err, result){
+    if (err) return false;
+    else{
+      console.log(`User added: ${username}`);
+      return true;
+    }
+  });
 }
 
 client.on('ready', () => {
