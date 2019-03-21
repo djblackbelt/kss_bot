@@ -37,7 +37,7 @@ function adminCommands(args, msg){
 function permCommands(args, msg){
   switch(args[2].toUpperCase()){
   case('ADD'):
-    createUser(client.users.get("name", args[3]).id;);
+    createUser(client.users.get("name", args[3]).id);
     break;
   case('ADMIN'):
     if(args[3].toUpperCase() == 'ADD') permAdminUserById(args[4]);
