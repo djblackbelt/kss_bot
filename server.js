@@ -9,6 +9,29 @@ var db;
 var colFlags;
 var colUsers;
 
+
+
+function adminCommands(args, msg){
+  switch(args[1].toUpperCase()){
+  case("flag"):
+    flagCommands(args, msg);
+    break;
+  }
+}
+
+function flagCommands(args, msg){
+  switch(args[2].toUpperCase()){
+  case('EDIT'):
+    if(args.length != 5) msg.reply("Invalid format, \'!admin flag edit <challenge name> <new flag>\' seeked.");
+    else editFlag(args[3], args[4]);
+    break;
+  }
+}
+
+function editFlag(name, newFlag){
+  colFlags.updateOne({"name": name}, { $set : {"flag": newFlag}});
+}
+
 function flagSub(flag, msg){
   colUsers.find({"id": msg.author.id}).toArray(function(err, res){
     if (res.length == 0) {
@@ -129,6 +152,9 @@ client.on('message', msg => {
       break;
     case("!flag"):
       flagSub(args[1], msg);
+      break;
+    case("!admin"):
+      adminCommands(args, msg);
       break;
     case("!create"):
       createChallenge(args, msg);
