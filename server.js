@@ -13,8 +13,11 @@ var colUsers;
 
 function adminCommands(args, msg){
   switch(args[1].toUpperCase()){
-  case("flag"):
+  case('FLAG'):
     flagCommands(args, msg);
+    break;
+  case('DB'):
+    dbCommands();
     break;
   }
 }
@@ -26,6 +29,19 @@ function flagCommands(args, msg){
     else editFlag(args[3], args[4]);
     break;
   }
+}
+
+function dbCommands(args, msg){
+  switch(args[2].toUpperCase()){
+  case('GET'):
+    if (args[3].toUpperCase() == 'FLAGS') getFlags(msg);
+  }
+}
+
+function getFlags(msg){
+  colFlags.find({}).toArray(function(err, res){
+    msg.reply(res);
+  });
 }
 
 function editFlag(name, newFlag){
