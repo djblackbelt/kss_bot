@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const util = require('utils')
+const util = require('utils');
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID
@@ -8,10 +8,15 @@ var url = "mongodb://localhost:27017/db";
 var db;
 var colFlags;
 var colUsers;
+var challengeCount;
 
 
 
 function adminCommands(args, msg){
+  if(!checkAdmin(msg.author)){
+    msg.reply("Nice try ;)"); //IMPLEMENT DYNAMIC FAIL POINT HERE
+    return false;
+  }
   switch(args[1].toUpperCase()){
   case('FLAG'):
     flagCommands(args, msg);
@@ -19,6 +24,36 @@ function adminCommands(args, msg){
   case('DB'):
     dbCommands();
     break;
+  case('CREATE'):
+    createChallenge(args, msg);
+    break;
+  case('PERM'):
+    permCommands(args, msg);
+    break;
+  }
+  return true;
+}
+
+function permCommands(args, msg){
+  switch(args[2].toUpperCase()){
+  case('ADD'):
+    createUser(client.users.get("name", args[3]).id;);
+    break;
+  case('ADMIN'):
+    if(args[3].toUpperCase() == 'ADD') permAdminUserById(args[4]);
+  }
+}
+
+function permAdminUserByTag(tag, add){
+  if(add){
+    colUsers.find({"tag": tag}).toArray(function(err, res){
+      if(res.length != 1) return false;
+      if(res[0]["permission"] === 'A') return false;
+      colUsers.updateOne({"tag": tag}, { $set : {"permission" : 'A'}}, function(err, res){
+        if (err) return false;
+        return true;
+      });
+    });
   }
 }
 
@@ -44,6 +79,13 @@ function getFlags(msg){
   });
 }
 
+function checkPromotion(usr){
+  colUsers.findOne({"username": usr.username}).toArray(function(err, res){
+    if(res.length != 1) return false;
+    if(res[0]["completed"])
+  });
+}
+
 function editFlag(name, newFlag){
   colFlags.updateOne({"name": name}, { $set : {"flag": newFlag}});
 }
@@ -64,42 +106,34 @@ function flagSub(flag, msg){
       colFlags.updateOne({"flag": flag}, {$push: {usersCompleted : msg.author.id}});
       colUsers.updateOne({"id": msg.author.id}, {$push: {challenges : result[0]["name"]}});
       msg.reply(`Congratulations! You have completed ${result[0]["name"]}!`);
+
     }
   });
 }
 
 function createChallenge(args, msg){
-  colUsers.find({}, {"id": msg.author.id}).toArray(function(err, result){
-    if (err) throw err;
-    else{
-      if (result[0]["permission"] == 'A'){
-        // ADMIN PERMISSIONED COMMANDS
-        if(args[1].toUpperCase() === 'FORMAT') {
-          msg.reply("Format = !create <challenge name> <author> <difficulty> <category> <flag>")
-        }else if(args.length == 6){
-          var temp = {
-            name: args[1],
-            author: args[2],
-            diff: args[3],
-            cat: args[4],
-            flag: args[5],
-            usersCompleted: []
-          }
-
-          colFlags.insert(temp, function(err, result){
-            if(err) throw err;
-            else{
-              console.log("Flag created successfully!");
-              msg.reply("Flag created successfully!");
-            }
-          });
-        }
-      }
-      else{
-        msg.reply('Permission not authorized');
-      }
+  if(args[2].toUpperCase() === 'FORMAT') {
+    msg.reply("Format = !create <challenge name> <author> <difficulty> <category> <flag>")
+  }else if(args.length == 7){
+    var temp = {
+      name: args[2],
+      author: args[3],
+      diff: args[4],
+      cat: args[5],
+      flag: args[6],
+      usersCompleted: []
     }
-  });
+
+    colFlags.insert(temp, function(err, result){
+      if(err) throw err;
+      else{
+        console.log("Flag created successfully!");
+        msg.reply("Flag created successfully!");
+      }
+    });
+}else{
+  msg.reply("Format not accepted, try !create format");
+  console.log("ERROR: Argument length != 7");
 }
 
 function permCommand(args, msg){
@@ -128,13 +162,13 @@ function permCommand(args, msg){
               }
             });
           }
-          if(result["permission"] != 'A') console.log(`You do not have permission.2`)
+          else if(result["permission"] != 'A') console.log(`You do not have permission.2`)
         }
       });
     }
   }
   else{
-    msg.reply(`Fuck you, ${msg.author.username}.`)
+    msg.reply(`Fuck you, ${msg.author.username}.`) // INSERT DYNAMIC FUCK YOU
   }
 }
 
@@ -155,6 +189,14 @@ function createUser(id, username, tag){
   });
 }
 
+function checkAdmin(user){
+  colUsers.find({"id": user.id}).toArray(function(err, res){
+    if(res.length != 1) return false;
+    if(res[0]["permission"].includes("A")) return true;
+    return false;
+  });
+}
+
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -172,9 +214,6 @@ client.on('message', msg => {
     case("!admin"):
       adminCommands(args, msg);
       break;
-    case("!create"):
-      createChallenge(args, msg);
-      break;
     case("!perm"):
       permCommand(args, msg);
       break;
@@ -188,6 +227,7 @@ MongoClient.connect(url, function(err, cl) {
     db = cl.db("db");
     colFlags = db.collection('flags');
     colUsers = db.collection('users');
+    challengeCount = colFlags.findOne({}).toArray().length;
   }
 });
 
