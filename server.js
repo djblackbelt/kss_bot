@@ -37,7 +37,8 @@ function adminCommands(args, msg){
 function permCommands(args, msg){
   switch(args[2].toUpperCase()){
   case('ADD'):
-    createUser(client.users.get("name", args[3]).idP);
+    var targ = client.users.get("name", args[3]);
+    createUser(targ.id, targ.usersname, targ.tag);
     break;
   case('ADMIN'):
     if(args[3].toUpperCase() == 'ADD') permAdminUserById(args[4]);
@@ -147,9 +148,10 @@ function createChallenge(args, msg){
         msg.reply("Flag created successfully!");
       }
     });
-}else{
-  msg.reply("Format not accepted, try !create format");
-  console.log("ERROR: Argument length != 7");
+  }else{
+    msg.reply("Format not accepted, try !create format");
+    console.log("ERROR: Argument length != 7");
+  }
 }
 
 function permCommand(args, msg){
@@ -237,6 +239,7 @@ client.on('message', msg => {
   }
 });
 
+
 MongoClient.connect(url, function(err, cl) {
   if (err) throw err;
   else{
@@ -244,7 +247,7 @@ MongoClient.connect(url, function(err, cl) {
     db = cl.db("db");
     colFlags = db.collection('flags');
     colUsers = db.collection('users');
-    challengeCount = colFlags.findOne({}).toArray().length;
+    challengeCount = colFlags.find({}).toArray().length;
   }
 });
 
