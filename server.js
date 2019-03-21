@@ -37,7 +37,7 @@ function adminCommands(args, msg){
 function permCommands(args, msg){
   switch(args[2].toUpperCase()){
   case('ADD'):
-    createUser(client.users.get("name", args[3]).id);
+    createUser(client.users.get("name", args[3]).idP);
     break;
   case('ADMIN'):
     if(args[3].toUpperCase() == 'ADD') permAdminUserById(args[4]);
@@ -82,8 +82,24 @@ function getFlags(msg){
 function checkPromotion(usr){
   colUsers.findOne({"username": usr.username}).toArray(function(err, res){
     if(res.length != 1) return false;
-    if(res[0]["completed"])
+    if(res[0]["completed"] == undefined){
+      colUsers.updateOne({"username": usr.username}, {$set: {completed: 0}}, function(err, res){
+        if (err) throw err;
+        else console.log(`${usr.username} has had their completed field added.`);
+      });
+    }
+    else if(res[0]["completed"] <= 1){
+      //PROMOTE TO SCRIPT KIDDIE
+    }
+    else if(res[0]["completed"] == challengeCount){
+      //PROMOTE TO HACKER
+    }
   });
+}
+
+function incremenetCompleted(usr){
+  var count;
+  colUsers.find
 }
 
 function editFlag(name, newFlag){
@@ -178,6 +194,7 @@ function createUser(id, username, tag){
     username: username,
     tag: tag,
     challenges: [],
+    completed: 0,
     permission: 'Z'
   }
   colUsers.insert(temp, function(err, result){
