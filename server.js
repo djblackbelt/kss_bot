@@ -2,39 +2,49 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const util = require('utils');
 
-// const helpf = require('./src/help.js');
-// const adminf = require('./src/admin.js');
-// const dbf = require('./src/db.js');
-// const flagf = require('./src/flag.js');
-// const guildf = require('./src/guildf.js');
-// const permf = require('./src/perm.js');
-// const rmf = require('./src/rm.js');
-// const rolef = require('./src/role.js');
-// const testf = require('./src/testing.js');
-// const tools = require('./stc/tools.js');
+const adminIn = require('./src/admin.js');
+const flagIn = require('./src/flag.js');
+const permIn = require('./src/perm.js');
+const rootIn = require('./src/root.js');
+const tools = require('./src/tools.js').tools();
+var adminf, flagf, permf, rootf;
 
 const rootTag = 'DeeJay#9425'
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID
 var url = "mongodb://localhost:27017/db";
+var vars;
 var db;
-var colFlags;
-var colUsers;
 var challengeCount;
-var kssGuild;
-var skrole;
-var hrole;
-var newsChannel;
+// var colFlags;
+// var colUsers;
+// var kssGuild;
+// var skrole;
+// var hrole;
+// var newsChannel;
 
+
+function getVars(){
+  return vars;
+}
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 
-  kssGuild = client.guilds.get("520241835348721684");
-  skrole = kssGuild.roles.find("name", "Script Kiddie");
-  hrole = kssGuild.roles.find("name", "Hacker");
-  newsChannel = kssGuild.channels.find("name", "news");
+  // kssGuild = client.guilds.get("520241835348721684");
+  // skrole = kssGuild.roles.find("name", "Script Kiddie");
+  // hrole = kssGuild.roles.find("name", "Hacker");
+  // newsChannel = kssGuild.channels.find("name", "news");
+  vars = {
+    db: db,
+    client: client,
+    chalCount: challengeCount
+  };
+  flagf = flagIn.flagf(vars);
+  adminf = adminIn.adminf(vars);
+  permf = permIn.permf(vars);
+  rootf = rootIn.rootf(vars);
 });
 
 client.on('message', msg => {
@@ -45,16 +55,16 @@ client.on('message', msg => {
       msg.reply('pong');
       break;
     case("!flag"):
-      flagSub(args[1], msg);
+      flagf.flagSub(args[1], msg);
       break;
     case("!admin"):
-      adminCommands(args, msg);
+      adminf.adminCommands(args, msg);
       break;
     case("!perm"):
-      permCommand(args, msg);
+      permf.permCommand(args, msg);
       break;
     case("$dj"):
-      rootCommands(args, msg);
+      rootf.rootCommands(args, msg);
       break;
   }
 });
@@ -65,9 +75,7 @@ MongoClient.connect(url, function(err, cl) {
   else{
     console.log("Database connection successful!");
     db = cl.db("db");
-    colFlags = db.collection('flags');
-    colUsers = db.collection('users');
-    challengeCount = colFlags.find({}).toArray().length;
+    challengeCount = db.collection('users').find({}).toArray().length;
   }
 });
 

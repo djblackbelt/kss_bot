@@ -1,11 +1,13 @@
-function rootCommands(args, msg){
-  if(msg.author.tag != rootTag){
+function rootf(vars){
+  function rootCommands(args, msg){
+    if(msg.author.tag != rootTag){
 
-  }else{
-    switch(args[1].toUpperCase()){
-    case('ADD'):
+    }else{
+      switch(args[1].toUpperCase()){
+      case('ADD'):
 
-      break;
+        break;
+      }
     }
   }
 }
