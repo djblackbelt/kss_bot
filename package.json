@@ -1,0 +1,24 @@
+{
+  "name": "kss_bot",
+  "version": "0.0.1",
+  "description": "Discord bot for KryptSec",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/djblackbelt/kss_bot.git"
+  },
+  "author": "KryptSec",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/djblackbelt/kss_bot/issues"
+  },
+  "homepage": "https://github.com/djblackbelt/kss_bot#readme",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "mongodb": "^3.2.2"
+  }
+}
