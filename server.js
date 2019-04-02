@@ -8,11 +8,10 @@ const permIn = require('./src/perm.js');
 const rootIn = require('./src/root.js');
 const tools = require('./src/tools.js').tools();
 
-const rootTag = 'DeeJay#9425';
+const config = require("./config.json");
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
-var url = "mongodb://localhost:27017/db";
 var vars;
 var db;
 var challengeCount;
@@ -71,7 +70,7 @@ client.on('message', msg => {
 });
 
 
-MongoClient.connect(url, function(err, cl) {
+MongoClient.connect(config.db_uri, function(err, cl) {
   if (err) throw err;
   else{
     console.log("Database connection successful!");
@@ -81,7 +80,4 @@ MongoClient.connect(url, function(err, cl) {
 });
 
 //KSS BOT
-client.login('NTUzNzY4MTQ5NTYwODUyNTAw.D2o-XA.xNCEo51oYjmdd2kjneFg5aAvNuM');
-
-//KSS TEST
-//client.login('NTYwMjM3MDk1NTg3Njc2MTcx.D3xEIw.89XmY8hr8eQRmSd11zWSFM-sPn8');
+client.login(config.discord_token);
