@@ -7,12 +7,11 @@ const flagIn = require('./src/flag.js');
 const permIn = require('./src/perm.js');
 const rootIn = require('./src/root.js');
 const tools = require('./src/tools.js').tools();
-var adminf, flagf, permf, rootf;
 
-const rootTag = 'DeeJay#9425'
+const rootTag = 'DeeJay#9425';
 
 var MongoClient = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID
+var ObjectID = require('mongodb').ObjectID;
 var url = "mongodb://localhost:27017/db";
 var vars;
 var db;
@@ -41,10 +40,11 @@ client.on('ready', () => {
     client: client,
     chalCount: challengeCount
   };
-  flagf = flagIn.flagf(vars);
-  adminf = adminIn.adminf(vars);
-  permf = permIn.permf(vars);
-  rootf = rootIn.rootf(vars);
+  var flagf = flagIn.flagf(vars);
+  var adminf = adminIn.adminf(vars);
+  var permf = permIn.permf(vars);
+  var rootf = rootIn.rootf(vars);
+  console.log(`Variables declared.`);
 });
 
 client.on('message', msg => {
@@ -60,10 +60,11 @@ client.on('message', msg => {
     case("!admin"):
       adminf.adminCommands(args, msg);
       break;
-    case("!perm"):
-      permf.permCommand(args, msg);
-      break;
+    // case("!perm"):
+    //   permf.permCommand(args, msg);
+    //   break;
     case("$dj"):
+      tools.debug('$dj called');
       rootf.rootCommands(args, msg);
       break;
   }

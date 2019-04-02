@@ -1,12 +1,12 @@
 exports.permf = function(vars){
-  const tools = require('./src/tools.js');
+  const tools = require('./tools.js');
 
   let client = vars['client'];
 
   const colFlags = vars['db'].collection('flags');
   const colUsers = vars['db'].collection('users');
 
-  function permCommands(args, msg){
+  function permCommand(args, msg){
     switch(args[2].toUpperCase()){
     case('ADD'):
       var targ = client.users.get("name", args[3]);

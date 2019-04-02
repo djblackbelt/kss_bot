@@ -1,5 +1,5 @@
 exports.dbf = function(vars){
-  const tools = require('./src/tools.js');
+  const tools = require('./tools.js');
 
   const colFlags = vars['db'].collection('flags');
   const colUsers = vars['db'].collection('users');

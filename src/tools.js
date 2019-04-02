@@ -1,5 +1,5 @@
-exports.tools = function(){
-  function userToString(user){
+exports.tools = function(vars){
+  exports.userToString = function(user){
     var returnStr = `{
       id = ${user["id"]}
       username = ${user["username"]}
@@ -8,6 +8,7 @@ exports.tools = function(){
       completed = ${user["completed"]}
       permission = ${user["permission"]}
     }`
+    return returnStr;
   }
 
   function flagToString(flg){
@@ -22,7 +23,8 @@ exports.tools = function(){
     return returnStr;
   }
 
-  function debug(msg){
+  exports.debug = function(msg){
     console.log(`DEBUG: ${msg}`);
   }
+  return this;
 }

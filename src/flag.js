@@ -1,5 +1,5 @@
 exports.flagf = function(vars){
-  const tools = require('./src/tools.js').tools();
+  const tools = require('./tools.js').tools();
   colFlags = vars['db'].collection('flags');
   colUsers = vars['db'].collection('users');
 

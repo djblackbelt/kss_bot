@@ -1,5 +1,7 @@
-function rolef(vars){
-  const tools = require('./src/tools.js');
+exports.rolef = function(vars){
+  var client = vars['client'];
+
+  const tools = require('./tools.js');
   const kssGuild = client.guilds.get("520241835348721684");
   const skrole = kssGuild.roles.find("name", "Script Kiddie");
   const hrole = kssGuild.roles.find("name", "Hacker");

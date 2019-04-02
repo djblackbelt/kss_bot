@@ -1,10 +1,10 @@
 exports.adminf = function(vars){
-  const tools = require('./src/tools.js').tools();
-  const flagf = require('./src/flag.js').flagf(vars);
-  const dbf = require('./src/db.js').dbf(vars);
-  const rmf = require('./src/rm.js').rmf(vars);
-  const permf = require('./src/perm.js').permf(vars);
-  const testf = require('./src/testing.js');
+  const tools = require('./tools.js').tools();
+  const flagf = require('./flag.js').flagf(vars);
+  const dbf = require('./db.js').dbf(vars);
+  const rmf = require('./rm.js').rmf(vars);
+  const rolef = require('./role.js').rolef(vars);
+  const testf = require('./testing.js');
 
   const colFlags = vars['db'].collection('flags');
   const colUsers = vars['db'].collection('users');
@@ -28,7 +28,7 @@ exports.adminf = function(vars){
         flagf.createChallenge(args, msg);
         break;
       case('PERM'):
-        permf.permCommands(args, msg);
+        rolef.permCommands(args, msg);
         break;
       case('RM'):
         rmf.rm(args, msg);
