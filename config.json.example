@@ -1,0 +1,7 @@
+{
+    "token": "<Discord bot token>",
+    "db_uri": "<mongo connect uri>",
+    "server_root": [
+        "<list of Discord user IDS>"
+    ]
+}
