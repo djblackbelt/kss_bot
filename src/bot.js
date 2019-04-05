@@ -41,23 +41,5 @@ function KSSBot(config) {
         if(ctx.content.startsWith(this.prefix)) {
             this.commands.handle(ctx);
         }
-
-        // switch(args[0]){
-        //   case("!ping"):
-        //     break;
-        //   case("!flag"):
-        //     flagf.flagSub(args[1], ctx);
-        //     break;
-        //   case("!admin"):
-        //     adminf.adminCommands(args, ctx);
-        //     break;
-        //   // case("!perm"):
-        //   //   permf.permCommand(args, ctx);
-        //   //   break;
-        //   case("$dj"):
-        //     tools.debug('$dj called');
-        //     rootf.rootCommands(args, ctx);
-        //     break;
-        // }
     });
 }
