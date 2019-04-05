@@ -4,5 +4,5 @@
 
 ```bash
 npm i
-node bot.js
+node index.js
 ```
