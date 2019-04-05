@@ -35,6 +35,7 @@ bot.commands.add(
             return bot.db.solveChallenge(user, challenge);
         })
         .then(challenge => {
+            bot.client.channels.find('name', 'bot_dump').send(`${user.tag} has completed ${challenge.name}`);
             ctx.channel.send(`Congratulations! You have completed ${challenge.name}!`);
         })
         .catch(err => {
@@ -44,6 +45,7 @@ bot.commands.add(
             else {
                 bot.log.error(err);
                 ctx.channel.send('An error occured, please notify an admin');
+
             }
         });
     }
