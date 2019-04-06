@@ -37,7 +37,7 @@ bot.commands.add(
         .then(challenge => {
             bot.client.channels.find('name', 'bot_dump').send(`${user.tag} has completed ${challenge.name}`);
             ctx.channel.send(`Congratulations! You have completed ${challenge.name}!`);
-            bot.client.channels.find('id', 563857408363986954).send(`${user.tag} has completed challenge ${challenge.name}`);
+            bot.client.channels.find('id', 563857408363986954).send(`@${user.tag} has completed challenge ${challenge.name}`);
         })
         .catch(err => {
             if(err instanceof UserException) {
