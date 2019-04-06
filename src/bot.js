@@ -2,7 +2,6 @@ const Discord = require('discord.js');
 
 const db = require('./db.js');
 const logger = require('./logger.js');
-const commands = require('./commands.js');
 
 module.exports = KSSBot;
 
@@ -10,11 +9,10 @@ function KSSBot(config) {
     this.config = config;
     this.db = null;
     this.log = logger;
+
+    this._message_handlers = [];
+
     this.client = new Discord.Client();
-
-    this.prefix = "!";
-
-    this.commands = new commands(this.prefix);
 
     db.connect(this.config)
     .then(db => {
@@ -36,10 +34,13 @@ function KSSBot(config) {
 
     this.client.on('message', ctx => {
         if(ctx.author.id != this.client.user.id && !ctx.guild) this.log.debug(`(${ctx.author.tag}): ${ctx.content}`);
-        var args = ctx.content.split(' ');
 
-        if(ctx.content.startsWith(this.prefix)) {
-            this.commands.handle(ctx);
-        }
+        this._message_handlers.forEach(handle => {
+            handle(ctx);
+        });
     });
 }
+
+KSSBot.prototype._addMessagehandler = function(func) {
+    this._message_handlers.push(func);
+};
