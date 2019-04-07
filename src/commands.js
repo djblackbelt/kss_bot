@@ -53,12 +53,12 @@ function CommandGroup(parent, name, opts) {
 
 CommandGroup.prototype.handle = function(ctx, args) {
     let name = args[0];
-    args = args.slice(1)
+    args = args.slice(1);
 
     if(!name) ctx.channel.send(this.getUsage());
 
     else if(name in this._children) {
-        let child = this._children[name]
+        let child = this._children[name];
         if(child instanceof CommandGroup) child.handle(ctx, args);
         else if((child instanceof Command)) {
             this.pre_invoke(ctx)
@@ -111,4 +111,4 @@ CommandGroup.prototype.getUsage = function() {
     return `
         \`\`\`${usage.join('\r\n')}\`\`\`
     `;
-}
+};
