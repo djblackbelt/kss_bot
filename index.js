@@ -66,7 +66,7 @@ commands.add(
                 ctx.reply(err.message);
             }
             else {
-                bot.log.error(err);
+                bot.log.error(err.stack);
                 ctx.channel.send('An error occured, please notify an admin');
 
             }
@@ -89,7 +89,7 @@ admin = commands.group(
                 ctx.channel.send(err.message);
             }
             else {
-                bot.log.error(err);
+                bot.log.error(err.stack);
                 ctx.channel.send('An error occured, please notify an admin');
             }
         }
