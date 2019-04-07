@@ -53,9 +53,8 @@ commands.add(
                 return bot.db.solveChallenge(user, challenge);
             })
             .then(challenge => {
-                bot.client.channels.find('name', 'bot_dump').send(`${user.tag} has completed ${challenge.name}`);
                 ctx.channel.send(`Congratulations! You have completed ${challenge.name}!`);
-                bot.client.channels.find('id', 563857408363986954).send(`@${user.tag} has completed challenge ${challenge.name}`);
+                bot.client.channels.find(x => x.id == "563857408363986954").send(`<@${user.id}> has completed challenge ${challenge.name} (${user.completed_challenges.length + 1} total)`);
             });
         })
         .catch(err => {
