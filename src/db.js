@@ -50,7 +50,7 @@ db.prototype.createUser = function(user) {
                 if (err) reject(err);
 
                 this.log.debug(`User added: ${user.tag}`);
-                resolve(res.ops);
+                resolve(res.ops[0]);
             }
         );
     });
