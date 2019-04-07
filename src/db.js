@@ -125,7 +125,7 @@ db.prototype.solveChallenge = function(user, flag) {
     return new Promise((resolve, reject) => {
         this._db.collection("users").findOneAndUpdate(
             {id: user.id},
-            {$push: {completed_challenges: flag._id}},
+            {$addToSet: {completed_challenges: flag._id.toString()}},
             (err, res) => {
                 if (err) reject(err);
 

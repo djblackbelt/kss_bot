@@ -43,23 +43,20 @@ commands.add(
     (ctx, args) => {
         if(!args[0]) return ctx.reply(`Usage: ${bot.prefix}flag <flag>`);
 
-        let user = null;
-
         bot.db.getUser(ctx.author)
-        .then(_user => {
-            user = _user; // gross
-            return bot.db.getChallengebyFlag(solve=args[0]);
-        })
-        .then((challenge) => {
-            if(!challenge) throw new UserException("This is not a valid flag.");
-            else if(user.completed_challenges.includes(challenge.id)) throw new UserException("You have already claimed this flag!");
+        .then(user => {
+            return bot.db.getChallengebyFlag(solve=args[0])
+            .then((challenge) => {
+                if(!challenge) throw new UserException("This is not a valid flag.");
+                else if(user.completed_challenges.includes(challenge._id.toString())) throw new UserException("You have already claimed this flag!");
 
-            return bot.db.solveChallenge(user, challenge);
-        })
-        .then(challenge => {
-            bot.client.channels.find('name', 'bot_dump').send(`${user.tag} has completed ${challenge.name}`);
-            ctx.channel.send(`Congratulations! You have completed ${challenge.name}!`);
-            bot.client.channels.find('id', 563857408363986954).send(`@${user.tag} has completed challenge ${challenge.name}`);
+                return bot.db.solveChallenge(user, challenge);
+            })
+            .then(challenge => {
+                bot.client.channels.find('name', 'bot_dump').send(`${user.tag} has completed ${challenge.name}`);
+                ctx.channel.send(`Congratulations! You have completed ${challenge.name}!`);
+                bot.client.channels.find('id', 563857408363986954).send(`@${user.tag} has completed challenge ${challenge.name}`);
+            });
         })
         .catch(err => {
             if(err instanceof UserException) {
