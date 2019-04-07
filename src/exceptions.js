@@ -2,3 +2,7 @@
 exports.UserException = function(message) {
     this.message = message;
 };
+
+exports.CommandArgException = function(message) {
+    this.message = message;
+};

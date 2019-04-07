@@ -17,7 +17,18 @@ commands = Commands(bot, "!");
 // Add commands
 // Goddamn decorators would make this so much nicer
 commands.add(
+    'help',
+    {
+        description: "show help"
+    },
+    (ctx) => {
+        ctx.reply(commands.getUsage());
+    }
+);
+
+commands.add(
     'ping',
+    {},
     (ctx) => {
         ctx.reply('pong');
     }
@@ -25,6 +36,10 @@ commands.add(
 
 commands.add(
     'flag',
+    {
+        description: "submit a challenge flag",
+        usage: "<flag>"
+    },
     (ctx, args) => {
         if(!args[0]) return ctx.reply(`Usage: ${bot.prefix}flag <flag>`);
 
@@ -56,24 +71,27 @@ commands.add(
 
             }
         });
-    }
+    },
 );
 
 admin = commands.group(
     'admin',
-    pre_invoke = ctx => {
-        return bot.db.checkAdmin(ctx.author)
-        .then(isAdmin => {
-            if(!isAdmin) throw new UserException("Username is not in the sudoers file. This incident will be reported");
-        });
-    },
-    on_error = (ctx, err) => {
-        if(err instanceof UserException) {
-            ctx.channel.send(err.message);
-        }
-        else {
-            bot.log.error(err);
-            ctx.channel.send('An error occured, please notify an admin');
+    {
+        description: "admin commands",
+        pre_invoke: ctx => {
+            return bot.db.checkAdmin(ctx.author)
+            .then(isAdmin => {
+                if(!isAdmin) throw new UserException("Username is not in the sudoers file. This incident will be reported");
+            });
+        },
+        on_error: (ctx, err) => {
+            if(err instanceof UserException) {
+                ctx.channel.send(err.message);
+            }
+            else {
+                bot.log.error(err);
+                ctx.channel.send('An error occured, please notify an admin');
+            }
         }
     }
 );
@@ -82,10 +100,18 @@ admin = commands.group(
 // CHALLENGE COMMANDS
 // ========================================
 
-challenge = admin.group('challenge');
+challenge = admin.group(
+    'challenge',
+    {
+        description: "challenge commands"
+    }
+);
 
 challenge.add(
     'list',
+    {
+        description: "list challenges"
+    },
     ctx => {
         return bot.db.getChallenges()
         .then(challenges => {
@@ -101,9 +127,11 @@ challenge.add(
 
 challenge.add(
     'create',
+    {
+        description: "add challenge",
+        usage: "<challenge name> <author id> <difficulty> <category> <flag>"
+    },
     (ctx, args) => {
-        if(args.length !== 5) throw new UserException(`Usage: ${bot.prefix}admin challenge create <challenge name> <author id> <difficulty> <category> <flag>`);
-
         return bot.db.createChallenge({
             name: args[0],
             author: ctx.mentions.length ? {
@@ -125,9 +153,11 @@ challenge.add(
 
 challenge.add(
     'delete',
+    {
+        description: "delete challenge",
+        usage: "<uuid>"
+    },
     (ctx, args) => {
-        if(args.length !== 3) throw new UserException(`Usage: ${bot.prefix}admin challenge delete <uuid>`);
-
         return bot.db.getChallenge({_id: args[2]})
         .then(challenge => {
             if(!challenge) throw new UserException('That challenge does not exist');
