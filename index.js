@@ -55,6 +55,19 @@ commands.add(
             .then(challenge => {
                 ctx.channel.send(`Congratulations! You have completed ${challenge.name}!`);
                 bot.client.channels.find(x => x.id == "563857408363986954").send(`<@${user.id}> has completed challenge ${challenge.name} (${user.completed_challenges.length + 1} total)`);
+
+                return bot.guild.fetchMember(ctx.author);
+            })
+            .then(member => {
+                let completed = user.completed_challenges.length + 1;
+                let roles = [];
+
+                if(completed >= 2) roles.push(bot.guild.roles.find(x => x.name == "Script Kiddie"));
+                if(completed >= 6) roles.push(bot.guild.roles.find(x => x.name == "Hacker"));
+
+                roles.forEach(role => {
+                    if(!(role.id in member.roles)) member.addRole(role);
+                });
             });
         })
         .catch(err => {
