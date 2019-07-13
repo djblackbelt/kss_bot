@@ -3,6 +3,7 @@
 ## Installation and Usage
 
 ```bash
-npm i
-node index.js
+pip install pipenv
+pipenv install
+pipenv run bot.py
 ```
