@@ -2,6 +2,7 @@ import os, sys
 import asyncio
 import logging
 import traceback
+import aiohttp
 
 import discord
 from discord.ext import commands
@@ -12,10 +13,13 @@ from pymongo.errors import ServerSelectionTimeoutError
 # DISCORD
 DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
 DISCORD_CLIENT_ID = os.environ.get("DISCORD_CLIENT_ID")
-DISCORD_GUILD = os.environ.get("DISCORD_GUILD")
 
 # MONGO
 MONGO_URI = os.environ.get("MONGO_URI")
+
+# STATS
+STATS_ID = os.environ.get("STATS_ID")
+STATS_TOKEN = os.environ.get("STATS_TOKEN")
 
 loop = asyncio.get_event_loop()
 
@@ -40,6 +44,7 @@ class KSS(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(command_prefix=_prefix_callable, description=description,
                          pm_help=None, help_attrs=dict(hidden=True), fetch_offline_members=False)
+        self.session = aiohttp.ClientSession(loop=self.loop)
 
         self.client_id = DISCORD_CLIENT_ID
 
@@ -51,11 +56,16 @@ class KSS(commands.AutoShardedBot):
                 print(f'Failed to load extension {extension}.', file=sys.stderr)
                 traceback.print_exc()
 
+    @property
+    def stats_webhook(self):
+        return discord.Webhook.partial(id=STATS_ID, token=STATS_TOKEN, adapter=discord.AsyncWebhookAdapter(self.session))
+
     async def on_ready(self):
         print(f"Connected as {self.user} - {self.user.id} on {len(self.guilds)} guilds")
 
     async def close(self):
         await super().close()
+        await self.session.close()
         self.mongo.close()
 
     async def init_mongo(self):
