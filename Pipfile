@@ -9,6 +9,7 @@ verify_ssl = true
 discord-py = "*"
 motor = "*"
 aiohttp = "*"
+texttable = "*"
 
 [requires]
 python_version = "3.7"
