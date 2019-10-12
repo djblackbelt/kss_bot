@@ -10,6 +10,7 @@ discord-py = "*"
 motor = "*"
 aiohttp = "*"
 texttable = "*"
+pygit2 = "*"
 
 [requires]
 python_version = "3.7"

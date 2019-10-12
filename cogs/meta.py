@@ -1,5 +1,11 @@
+import random
+from datetime import datetime
+
 import discord
 from discord.ext import commands
+
+import pygit2
+import platform
 
 class Meta(commands.Cog):
     """Commands for utilities related to Discord or the Bot itself."""
@@ -82,6 +88,44 @@ class Meta(commands.Cog):
         perms.attach_files = True
         perms.add_reactions = True
         await ctx.send(f'<{discord.utils.oauth_url(self.bot.client_id, perms)}>')
+
+    @commands.command()
+    async def about(self, ctx):
+        "Shows information about the bot"
+
+        repo = pygit2.Repository('.git')
+        commit = repo.revparse_single(str(repo.head.target))
+
+        colors = [
+            discord.Color.red,
+            discord.Color.blue,
+            discord.Color.teal,
+            discord.Color.green,
+            discord.Color.purple,
+            discord.Color.magenta,
+            discord.Color.gold,
+            discord.Color.orange,
+        ]
+
+        e = discord.Embed()
+        e.color = random.choice(colors)()
+        e.title = f'{self.bot.user.name}#{self.bot.user.discriminator}'
+        e.url = repo.remotes["origin"].url
+        e.set_thumbnail(url=self.bot.user.avatar_url_as(static_format='png', size=64))
+        e.description = (
+            f'**PLATFORM**\n'
+            f'{platform.platform()}\n'
+            f'{platform.python_implementation()} {platform.python_version()} {platform.python_build()[1]}\n'
+            f'\n'
+            f'**GIT**\n'
+            f'{repo.remotes["origin"].url}\n'
+            f'`{str(repo.head.target)[:7]}` *{commit.message.strip()}*\n'
+            f'{commit.author.name} @ {datetime.fromtimestamp(commit.commit_time)}\n'
+        )
+        e.timestamp = datetime.now()
+        e.set_footer(text=self.bot.user.id)
+
+        await ctx.send(embed=e)
 
     @commands.command(rest_is_raw=True, hidden=True)
     @commands.is_owner()
