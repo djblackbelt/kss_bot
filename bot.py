@@ -33,7 +33,8 @@ KryptSec
 initial_extensions = (
     'cogs.meta',
     'cogs.admin',
-    'cogs.kss'
+    'cogs.kss',
+    'cogs.crypt'
 )
 
 async def _prefix_callable(bot, msg):
