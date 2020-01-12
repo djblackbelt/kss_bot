@@ -94,6 +94,37 @@ class KSS(commands.Cog):
     def guild(self):
         return self.bot.get_guild(GUILD)
 
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        if member.guild.id != GUILD:
+            return
+
+        user = await self.db.get_user(member)
+
+        if not user:
+            # Add Noob role
+            role = self.guild.get_role(665695938068873267)
+            await member.add_roles(role)
+
+            # Add user to db
+            await self.db.create_user(member)
+            user = await self.db.get_user(member)
+
+            # Send welcome
+            await member.send((
+                f'Welcome {member.mention} to {self.guild.name}!\n'
+                '\n'
+                f'type `!help` anywhere in the server for more information about how to interact with {self.guild.name} Discord'
+            ))
+
+        else:
+            # re-populate previous roles
+            roles = [self.guild.get_role(v) for k, v in self.roles.items() if len(user["completed_challenges"]) >= k]
+            new_roles = list([role for role in roles if role not in member.roles])
+
+            for role in new_roles:
+                await member.add_roles(role)
+
     @commands.dm_only()
     @commands.command()
     async def flag(self, ctx, flag: str):
