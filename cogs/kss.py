@@ -60,6 +60,7 @@ class KSS(commands.Cog):
     """KSS specific commands"""
 
     roles = {
+        0: 665695938068873267, # Noob
         2: 534131616990363671, # Script Kiddie
         6: 534131244355551233, # Hacker
         8: 534130064606887965  # Elite Hacker
